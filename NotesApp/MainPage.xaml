@@ -1,0 +1,85 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:NotesApp"
+             x:Class="NotesApp.MainPage"
+             x:DataType="local:MainPage"
+             Title="Мої нотатки">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <!-- Стиль для заголовків (день тижня) -->
+            <Style x:Key="BoldLabelStyle" TargetType="Label">
+                <Setter Property="FontSize" Value="16" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="HorizontalOptions" Value="Start" />
+                <Setter Property="TextColor" Value="Black" />
+            </Style>
+
+            <!-- Стиль для звичайного тексту (дата, тема) -->
+            <Style x:Key="NormalLabelStyle" TargetType="Label">
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="HorizontalOptions" Value="Start" />
+                <Setter Property="TextColor" Value="Gray" />
+            </Style>
+
+            <!-- Стиль для кнопок -->
+            <Style x:Key="ButtonStyle" TargetType="Button">
+                <Setter Property="FontSize" Value="20" />
+                <Setter Property="VerticalOptions" Value="Center" />
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="30,0" Spacing="25">
+            <!-- Кнопка для додавання нового дня -->
+            <Button x:Name="AddButton" 
+                    Text="Додати новий день"
+                    Style="{StaticResource ButtonStyle}"
+                    Command="{Binding AddDayCommand}" />
+
+            <!-- Список нотаток -->
+            <CollectionView x:Name="NotesCollectionView" ItemsSource="{Binding Notes}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="local:Note">
+                        <!-- Використовуємо Border для оформлення картки -->
+                        <Border Stroke="Gray"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 10"
+                                Padding="20"
+                                HorizontalOptions="Fill">
+
+                            <!-- Використовуємо Grid для розташування елементів -->
+                            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                                <!-- День тижня, дата та тема -->
+                                <VerticalStackLayout Grid.Column="0">
+                                    <Label Text="{Binding DayOfWeek}" Style="{StaticResource BoldLabelStyle}" />
+                                    <Label Text="{Binding Date}" Style="{StaticResource NormalLabelStyle}" />
+                                    <Label Text="{Binding Topic, StringFormat='Тема: {0}'}" Style="{StaticResource NormalLabelStyle}" />
+                                </VerticalStackLayout>
+
+                                <!-- Кнопки "Редагувати" та "Видалити" -->
+                                <VerticalStackLayout Grid.Column="1" Spacing="10">
+                                    <Button x:Name="EditButton"
+                                            Text="Редагувати"
+                                            Style="{StaticResource ButtonStyle}"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type local:MainPage}}, Path=BindingContext.EditCommand}"
+                                            CommandParameter="{Binding .}" />
+
+                                    <Button x:Name="DeleteButton"
+                                            Text="Видалити"
+                                            Style="{StaticResource ButtonStyle}"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type local:MainPage}}, Path=BindingContext.DeleteCommand}"
+                                            CommandParameter="{Binding .}"
+                                            BackgroundColor="Red"
+                                            TextColor="White" />
+                                </VerticalStackLayout>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
