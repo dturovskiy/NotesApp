@@ -1,10 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:res="clr-namespace:NotesApp.Resources.Localization"
              xmlns:local="clr-namespace:NotesApp"
              x:Class="NotesApp.MainPage"
              x:DataType="local:MainPage"
-             Title="Мої нотатки">
+             Title="{x:Static res:Localization.Title}">
 
     <ContentPage.Resources>
         <ResourceDictionary>
@@ -13,14 +14,13 @@
                 <Setter Property="FontSize" Value="16" />
                 <Setter Property="FontAttributes" Value="Bold" />
                 <Setter Property="HorizontalOptions" Value="Start" />
-                <Setter Property="TextColor" Value="Black" />
+                <Setter Property="TextColor" Value="{DynamicResource TextColor}" />
             </Style>
 
-            <!-- Стиль для звичайного тексту (дата, тема) -->
             <Style x:Key="NormalLabelStyle" TargetType="Label">
                 <Setter Property="FontSize" Value="14" />
                 <Setter Property="HorizontalOptions" Value="Start" />
-                <Setter Property="TextColor" Value="Gray" />
+                <Setter Property="TextColor" Value="{DynamicResource SecondaryTextColor}" />
             </Style>
 
             <!-- Стиль для кнопок -->
@@ -31,8 +31,15 @@
         </ResourceDictionary>
     </ContentPage.Resources>
 
+    <ContentPage.ToolbarItems>
+        <ToolbarItem x:Name="ThemeSwitchButton" Text="🌙" Clicked="OnThemeSwitchClicked" />
+        <ToolbarItem x:Name="LanguageSwitchButton" Text="UK" Clicked="OnLanguageSwitchClicked" />
+    </ContentPage.ToolbarItems>
+
+
     <ScrollView>
-        <VerticalStackLayout Padding="30,0" Spacing="25">
+        <VerticalStackLayout Padding="20,0" Spacing="20">
+
             <!-- Кнопка для додавання нового дня -->
             <Button x:Name="AddButton" 
                     Text="Додати новий день"
@@ -41,34 +48,48 @@
 
             <!-- Список нотаток -->
             <CollectionView x:Name="NotesCollectionView" ItemsSource="{Binding Notes}">
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Vertical" ItemSpacing="5"/>
+                </CollectionView.ItemsLayout>
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="local:Note">
                         <!-- Використовуємо Border для оформлення картки -->
                         <Border Stroke="Gray"
                                 StrokeThickness="1"
-                                StrokeShape="RoundRectangle 10"
+                                StrokeShape="RoundRectangle 30"
                                 Padding="20"
                                 HorizontalOptions="Fill">
 
                             <!-- Використовуємо Grid для розташування елементів -->
                             <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
                                 <!-- День тижня, дата та тема -->
-                                <VerticalStackLayout Grid.Column="0">
-                                    <Label Text="{Binding DayOfWeek}" Style="{StaticResource BoldLabelStyle}" />
-                                    <Label Text="{Binding Date}" Style="{StaticResource NormalLabelStyle}" />
-                                    <Label Text="{Binding Topic, StringFormat='Тема: {0}'}" Style="{StaticResource NormalLabelStyle}" />
+                                <VerticalStackLayout Grid.Column="0" Spacing="5">
+                                    <HorizontalStackLayout Spacing="10">
+                                        <Label Text="{Binding DayOfWeek}" Style="{StaticResource BoldLabelStyle}" />
+                                        <Label Text="{Binding Date}" Style="{StaticResource NormalLabelStyle}" />
+                                    </HorizontalStackLayout>
+
+                                    <Border Stroke="Gray" StrokeThickness="2" StrokeShape="RoundRectangle 15" Padding="15" HorizontalOptions="Fill">
+                                        <VerticalStackLayout Spacing="5">
+                                            <!-- Слово "Тема" -->
+                                            <Label Text="{Binding TopicLabel}" Style="{StaticResource NormalLabelStyle}" />
+
+                                            <!-- Текст теми -->
+                                            <Label Text="{Binding Topic}" Style="{StaticResource NormalLabelStyle}" />
+                                        </VerticalStackLayout>
+                                    </Border>
                                 </VerticalStackLayout>
 
                                 <!-- Кнопки "Редагувати" та "Видалити" -->
                                 <VerticalStackLayout Grid.Column="1" Spacing="10">
                                     <Button x:Name="EditButton"
-                                            Text="Редагувати"
+                                            Text="{Binding EditButtonText}"
                                             Style="{StaticResource ButtonStyle}"
                                             Command="{Binding Source={RelativeSource AncestorType={x:Type local:MainPage}}, Path=BindingContext.EditCommand}"
                                             CommandParameter="{Binding .}" />
 
                                     <Button x:Name="DeleteButton"
-                                            Text="Видалити"
+                                            Text="{Binding DeleteButtonText}"
                                             Style="{StaticResource ButtonStyle}"
                                             Command="{Binding Source={RelativeSource AncestorType={x:Type local:MainPage}}, Path=BindingContext.DeleteCommand}"
                                             CommandParameter="{Binding .}"
