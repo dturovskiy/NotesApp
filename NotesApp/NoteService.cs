@@ -1,5 +1,4 @@
 ﻿using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace NotesApp
 {
@@ -11,7 +10,7 @@ namespace NotesApp
         // Завантажити нотатки з файлу асинхронно
         public static async Task<List<Note>> LoadNotesAsync()
         {
-            if (_cachedNotes != null)
+            if (_cachedNotes.Count > 0)
                 return _cachedNotes;
 
             if (!File.Exists(filePath))
@@ -26,18 +25,17 @@ namespace NotesApp
             catch (Exception ex)
             {
                 Console.WriteLine($"Помилка при завантаженні нотаток: {ex.Message}");
-                return _cachedNotes = new List<Note>(); // Повертаємо порожній список, щоб уникнути крешу
+                return _cachedNotes = new List<Note>();
             }
         }
 
-        // Зберегти нотатки у файл асинхронно
         public static async Task SaveNotesAsync(IEnumerable<Note> notes)
         {
             try
             {
                 string json = JsonSerializer.Serialize(notes, new JsonSerializerOptions { WriteIndented = false });
                 await File.WriteAllTextAsync(filePath, json);
-                _cachedNotes = notes.ToList(); // Оновлюємо кеш
+                _cachedNotes = notes.ToList(); // Оновлюємо кеш після успішного збереження
             }
             catch (Exception ex)
             {

@@ -1,22 +1,75 @@
-﻿namespace NotesApp
+﻿using NotesApp.Resources.Localization;
+using System.ComponentModel;
+
+namespace NotesApp
 {
-    public class Note
+    public class Note : INotifyPropertyChanged
     {
-        // Статичні поля для імен властивостей (якщо потрібно для прив'язок)
-        public static readonly string DayOfWeekPropertyName = nameof(DayOfWeek);
-        public static readonly string DatePropertyName = nameof(Date);
-        public static readonly string TopicPropertyName = nameof(Topic);
+        private string _dayOfWeek;
+        private string _date;
+        private string _topic;
 
-        public string DayOfWeek { get; set; } // День тижня (наприклад, "ПОНЕДІЛОК")
-        public string Date { get; set; } // Дата у форматі "день/місяць/рік"
-        public string Topic { get; set; } // Тема
+        public string EditButtonText => Localization.Edit;
+        public string DeleteButtonText => Localization.Delete;
+        public string TopicLabel => Localization.Topic;
 
-        // Конструктор для ініціалізації властивостей
+        public string DayOfWeek
+        {
+            get => _dayOfWeek;
+            set
+            {
+                if (_dayOfWeek != value)
+                {
+                    _dayOfWeek = value;
+                    OnPropertyChanged(nameof(DayOfWeek));
+                }
+            }
+        }
+
+        public string Date
+        {
+            get => _date;
+            set
+            {
+                if (_date != value)
+                {
+                    _date = value;
+                    OnPropertyChanged(nameof(Date));
+                }
+            }
+        }
+
+        public string Topic
+        {
+            get => _topic;
+            set
+            {
+                if (_topic != value)
+                {
+                    _topic = value;
+                    OnPropertyChanged(nameof(Topic));
+                }
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
         public Note()
         {
             DayOfWeek = string.Empty;
             Date = string.Empty;
             Topic = string.Empty;
+        }
+
+        public void UpdateLocalizedTexts()
+        {
+            OnPropertyChanged(nameof(EditButtonText));
+            OnPropertyChanged(nameof(DeleteButtonText));
+            OnPropertyChanged(nameof(TopicLabel));
         }
     }
 }
