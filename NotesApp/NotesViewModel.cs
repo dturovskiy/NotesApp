@@ -36,10 +36,12 @@ namespace NotesApp
             var today = DateTime.Now;
             var newNote = new Note
             {
-                DayOfWeek = today.ToString("dddd").ToUpper(),
-                Date = today.ToString("dd/MM/yyyy"),
+                Date = today, // Зберігаємо дату як DateTime
                 Topic = "Введіть тему"
             };
+
+            // Оновлюємо день тижня та форматовану дату після створення нотатки
+            newNote.UpdateDayOfWeek(); // Якщо ви хочете оновити день тижня для нової нотатки
 
             await NoteService.AddNoteAsync(newNote);
             Notes.Add(newNote);
@@ -76,7 +78,20 @@ namespace NotesApp
             if (loadedNotes is not null)
             {
                 Notes = new ObservableCollection<Note>(loadedNotes);
-                OnPropertyChanged(nameof(Notes)); // Оповіщаємо UI про зміну колекції
+
+                // Оновлюємо дні тижня після завантаження
+                UpdateDaysOfWeek();
+
+                OnPropertyChanged(nameof(Notes));
+            }
+        }
+
+        public void UpdateDaysOfWeek()
+        {
+            // Оновлюємо день тижня для кожної нотатки
+            foreach (var note in Notes)
+            {
+                note.UpdateDayOfWeek(); // Викликаємо метод оновлення дня тижня
             }
         }
 
@@ -87,6 +102,9 @@ namespace NotesApp
             OnPropertyChanged(nameof(TopicLabel));
             OnPropertyChanged(nameof(AddButtonText));
             OnPropertyChanged(nameof(Title));
+
+            // Оновлюємо дні тижня при зміні мови
+            UpdateDaysOfWeek();
         }
     }
 }

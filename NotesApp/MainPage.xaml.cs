@@ -1,5 +1,5 @@
 ﻿using NotesApp.Resources.Localization;
-using System.Globalization;
+using NotesApp.Services;
 
 namespace NotesApp
 {
@@ -16,6 +16,30 @@ namespace NotesApp
 
             // Встановлюємо BindingContext
             BindingContext = ViewModel;
+
+            LocalizationService.LanguageChanged += OnLanguageChanged;
+
+            UpdateLanguageButton();
+        }
+
+        private void OnLanguageChanged()
+        {
+            // Оновлення локалізованих текстів
+            ViewModel.UpdateLocalizedTexts();
+
+            // Оновлення дня тижня при зміні мови
+            ViewModel.UpdateDaysOfWeek();
+
+            // Оновлення заголовка
+            UpdateTitle();
+
+            // Оновлення прапорця
+            UpdateLanguageButton();
+        }
+
+        private void UpdateLanguageButton()
+        {
+            LanguageSwitchButton.Text = LocalizationService.GetFlag();
         }
 
         private void OnThemeSwitchClicked(object sender, EventArgs e)
@@ -38,37 +62,22 @@ namespace NotesApp
             }
         }
 
-        private async void OnLanguageSwitchClicked(object sender, EventArgs e)
+        private void OnLanguageSwitchClicked(object sender, EventArgs e)
         {
             // Зміна мови
-            if (LanguageSwitchButton.Text == "UK")
-            {
-                LanguageSwitchButton.Text = "EN";
-                Thread.CurrentThread.CurrentCulture = new CultureInfo("en");
-                Thread.CurrentThread.CurrentUICulture = new CultureInfo("en");
-            }
-            else if (LanguageSwitchButton.Text == "EN")
-            {
-                LanguageSwitchButton.Text = "FR";
-                Thread.CurrentThread.CurrentCulture = new CultureInfo("fr");
-                Thread.CurrentThread.CurrentUICulture = new CultureInfo("fr");
-            }
-            else
-            {
-                LanguageSwitchButton.Text = "UK";
-                Thread.CurrentThread.CurrentCulture = new CultureInfo("uk");
-                Thread.CurrentThread.CurrentUICulture = new CultureInfo("uk");
-            }
-
-            // Оновлення локалізованих текстів
-            ViewModel.UpdateLocalizedTexts();
-            UpdateTitle();
-            await DisplayAlert("Зміна мови", "Мова була змінена.", "OK");
+            LocalizationService.SwitchLanguage();
         }
 
         private void UpdateTitle()
         {
             Title = Localization.Title;
+        }
+
+        protected override void OnDisappearing()
+        {
+            // Відписуємося від події при закритті сторінки
+            LocalizationService.LanguageChanged -= OnLanguageChanged;
+            base.OnDisappearing();
         }
     }
 }

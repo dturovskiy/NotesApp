@@ -33,7 +33,7 @@
 
     <ContentPage.ToolbarItems>
         <ToolbarItem x:Name="ThemeSwitchButton" Text="🌙" Clicked="OnThemeSwitchClicked" />
-        <ToolbarItem x:Name="LanguageSwitchButton" Text="UK" Clicked="OnLanguageSwitchClicked" />
+        <ToolbarItem x:Name="LanguageSwitchButton" Text="🌐" Clicked="OnLanguageSwitchClicked" />
     </ContentPage.ToolbarItems>
 
     <ScrollView>
@@ -63,9 +63,14 @@
                             <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
                                 <!-- День тижня, дата та тема -->
                                 <VerticalStackLayout Grid.Column="0" Spacing="5">
-                                    <HorizontalStackLayout Spacing="10">
-                                        <Label Text="{Binding DayOfWeek}" Style="{StaticResource BoldLabelStyle}" />
-                                        <Label Text="{Binding Date}" Style="{StaticResource NormalLabelStyle}" />
+                                    <HorizontalStackLayout Spacing="10" HorizontalOptions="Fill">
+                                        <Label Text="{Binding DayOfWeek}" 
+                                               Style="{StaticResource BoldLabelStyle}" 
+                                               HorizontalOptions="Start" />
+
+                                        <Label Text="{Binding FormattedDate}" 
+                                               Style="{StaticResource NormalLabelStyle}" 
+                                               HorizontalOptions="End" />
                                     </HorizontalStackLayout>
 
                                     <Border Stroke="Gray" StrokeThickness="2" StrokeShape="RoundRectangle 15" Padding="15" HorizontalOptions="Fill">
