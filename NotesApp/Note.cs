@@ -1,21 +1,14 @@
-﻿using NotesApp.Resources.Localization;
-using System.ComponentModel;
-
-namespace NotesApp
+﻿namespace NotesApp
 {
-    public class Note : INotifyPropertyChanged
+    public class Note : ObservableObject
     {
-        private string _dayOfWeek;
-        private string _date;
-        private string _topic;
-
-        public string EditButtonText => Localization.Edit;
-        public string DeleteButtonText => Localization.Delete;
-        public string TopicLabel => Localization.Topic;
+        private string? _dayOfWeek;
+        private string? _date;
+        private string? _topic;
 
         public string DayOfWeek
         {
-            get => _dayOfWeek;
+            get => _dayOfWeek ?? string.Empty; // Повертаємо порожній рядок, якщо значення null
             set
             {
                 if (_dayOfWeek != value)
@@ -28,7 +21,7 @@ namespace NotesApp
 
         public string Date
         {
-            get => _date;
+            get => _date ?? string.Empty; // Повертаємо порожній рядок, якщо значення null
             set
             {
                 if (_date != value)
@@ -41,7 +34,7 @@ namespace NotesApp
 
         public string Topic
         {
-            get => _topic;
+            get => _topic ?? string.Empty; // Повертаємо порожній рядок, якщо значення null
             set
             {
                 if (_topic != value)
@@ -50,26 +43,6 @@ namespace NotesApp
                     OnPropertyChanged(nameof(Topic));
                 }
             }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        public Note()
-        {
-            DayOfWeek = string.Empty;
-            Date = string.Empty;
-            Topic = string.Empty;
-        }
-
-        public void UpdateLocalizedTexts()
-        {
-            OnPropertyChanged(nameof(EditButtonText));
-            OnPropertyChanged(nameof(DeleteButtonText));
-            OnPropertyChanged(nameof(TopicLabel));
         }
     }
 }

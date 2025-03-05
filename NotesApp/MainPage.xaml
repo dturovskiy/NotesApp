@@ -4,7 +4,7 @@
              xmlns:res="clr-namespace:NotesApp.Resources.Localization"
              xmlns:local="clr-namespace:NotesApp"
              x:Class="NotesApp.MainPage"
-             x:DataType="local:MainPage"
+             x:DataType="local:NotesViewModel"
              Title="{x:Static res:Localization.Title}">
 
     <ContentPage.Resources>
@@ -36,13 +36,12 @@
         <ToolbarItem x:Name="LanguageSwitchButton" Text="UK" Clicked="OnLanguageSwitchClicked" />
     </ContentPage.ToolbarItems>
 
-
     <ScrollView>
         <VerticalStackLayout Padding="20,0" Spacing="20">
 
             <!-- Кнопка для додавання нового дня -->
-            <Button x:Name="AddButton" 
-                    Text="Додати новий день"
+            <Button x:Name="AddButton"
+                    Text="{Binding AddButtonText}"
                     Style="{StaticResource ButtonStyle}"
                     Command="{Binding AddDayCommand}" />
 
@@ -72,7 +71,8 @@
                                     <Border Stroke="Gray" StrokeThickness="2" StrokeShape="RoundRectangle 15" Padding="15" HorizontalOptions="Fill">
                                         <VerticalStackLayout Spacing="5">
                                             <!-- Слово "Тема" -->
-                                            <Label Text="{Binding TopicLabel}" Style="{StaticResource NormalLabelStyle}" />
+                                            <Label Text="{Binding Source={RelativeSource AncestorType={x:Type local:MainPage}}, Path=BindingContext.TopicLabel}" 
+                                                   Style="{StaticResource NormalLabelStyle}" />
 
                                             <!-- Текст теми -->
                                             <Label Text="{Binding Topic}" Style="{StaticResource NormalLabelStyle}" />
@@ -83,13 +83,13 @@
                                 <!-- Кнопки "Редагувати" та "Видалити" -->
                                 <VerticalStackLayout Grid.Column="1" Spacing="10">
                                     <Button x:Name="EditButton"
-                                            Text="{Binding EditButtonText}"
+                                            Text="{Binding Source={RelativeSource AncestorType={x:Type local:MainPage}}, Path=BindingContext.EditButtonText}"
                                             Style="{StaticResource ButtonStyle}"
                                             Command="{Binding Source={RelativeSource AncestorType={x:Type local:MainPage}}, Path=BindingContext.EditCommand}"
                                             CommandParameter="{Binding .}" />
 
                                     <Button x:Name="DeleteButton"
-                                            Text="{Binding DeleteButtonText}"
+                                            Text="{Binding Source={RelativeSource AncestorType={x:Type local:MainPage}}, Path=BindingContext.DeleteButtonText}"
                                             Style="{StaticResource ButtonStyle}"
                                             Command="{Binding Source={RelativeSource AncestorType={x:Type local:MainPage}}, Path=BindingContext.DeleteCommand}"
                                             CommandParameter="{Binding .}"
