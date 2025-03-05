@@ -1,32 +1,13 @@
-﻿using NotesApp.Resources.Localization;
-using System.ComponentModel;
+﻿using System.Globalization;
 
 namespace NotesApp
 {
-    public class Note : INotifyPropertyChanged
+    public class Note : ObservableObject
     {
-        private string _dayOfWeek;
-        private string _date;
-        private string _topic;
+        private DateTime _date;
+        private string? _topic;
 
-        public string EditButtonText => Localization.Edit;
-        public string DeleteButtonText => Localization.Delete;
-        public string TopicLabel => Localization.Topic;
-
-        public string DayOfWeek
-        {
-            get => _dayOfWeek;
-            set
-            {
-                if (_dayOfWeek != value)
-                {
-                    _dayOfWeek = value;
-                    OnPropertyChanged(nameof(DayOfWeek));
-                }
-            }
-        }
-
-        public string Date
+        public DateTime Date
         {
             get => _date;
             set
@@ -35,13 +16,15 @@ namespace NotesApp
                 {
                     _date = value;
                     OnPropertyChanged(nameof(Date));
+                    OnPropertyChanged(nameof(DayOfWeek)); // Оновлюємо DayOfWeek при зміні дати
+                    OnPropertyChanged(nameof(FormattedDate));
                 }
             }
         }
 
         public string Topic
         {
-            get => _topic;
+            get => _topic ?? string.Empty;
             set
             {
                 if (_topic != value)
@@ -52,24 +35,19 @@ namespace NotesApp
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged(string propertyName)
+        // Обчислювана властивість для дня тижня
+        public string DayOfWeek => Date.ToString("dddd", CultureInfo.CurrentCulture).ToUpper();
+        public string FormattedDate => Date.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture);
+
+        // Метод для оновлення дня тижня
+        public void UpdateDayOfWeek()
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            OnPropertyChanged(nameof(DayOfWeek));
         }
 
-        public Note()
+        public void FormateDate()
         {
-            DayOfWeek = string.Empty;
-            Date = string.Empty;
-            Topic = string.Empty;
-        }
-
-        public void UpdateLocalizedTexts()
-        {
-            OnPropertyChanged(nameof(EditButtonText));
-            OnPropertyChanged(nameof(DeleteButtonText));
-            OnPropertyChanged(nameof(TopicLabel));
+            OnPropertyChanged(nameof(FormattedDate));
         }
     }
 }
