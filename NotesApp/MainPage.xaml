@@ -36,6 +36,15 @@
         <ToolbarItem x:Name="LanguageSwitchButton" Text="🌐" Clicked="OnLanguageSwitchClicked" />
     </ContentPage.ToolbarItems>
 
+    <Grid>
+        <ActivityIndicator x:Name="LoadingIndicator"
+                       IsRunning="True"
+                       IsVisible="{Binding IsLoading}"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"
+                       Color="Blue" />
+    
+    
     <ScrollView>
         <VerticalStackLayout Padding="20,0" Spacing="20">
 
@@ -108,4 +117,5 @@
             </CollectionView>
         </VerticalStackLayout>
     </ScrollView>
+    </Grid>
 </ContentPage>

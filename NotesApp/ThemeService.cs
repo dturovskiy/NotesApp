@@ -1,46 +1,78 @@
-﻿//using NotesApp.Services;
+﻿using System.Diagnostics;
 
-//namespace NotesApp
-//{
-//    public static class ThemeService
-//    {
-//        // Зміна теми
-//        public static void SwitchTheme()
-//        {
-//            if (Application.Current is null) return;
+namespace NotesApp.Services
+{
+    public static class ThemeService
+    {
+        private const string ThemeKey = "AppTheme";
 
-//            // Перемикання між світлою та темною темою
-//            Application.Current.UserAppTheme = Application.Current.UserAppTheme == AppTheme.Light ? AppTheme.Dark : AppTheme.Light;
+        // Подія для сповіщення про зміну теми
+        public static event Action? ThemeChanged;
 
-//            // Зберігаємо поточну тему в налаштуваннях
-//            SaveTheme();
-//        }
+        // Зміна теми
+        public static void ToggleTheme()
+        {
+            if (Application.Current is null) return;
 
-//        // Оновлення кнопки з темою
-//        public static void UpdateThemeButton(Button themeSwitchButton)
-//        {
-//            if (Application.Current?.RequestedTheme == AppTheme.Dark)
-//            {
-//                themeSwitchButton.Text = "☀️";
-//            }
-//            else
-//            {
-//                themeSwitchButton.Text = "🌙";
-//            }
-//        }
+            // Змінюємо тему на протилежну
+            Application.Current.UserAppTheme = Application.Current.UserAppTheme == AppTheme.Light ? AppTheme.Dark : AppTheme.Light;
 
-//        // Завантаження теми з налаштувань
-//        public static void LoadSavedTheme()
-//        {
-//            var savedTheme = SettingsService.LoadSetting("theme", "light");
-//            Application.Current.UserAppTheme = savedTheme == "dark" ? AppTheme.Dark : AppTheme.Light;
-//        }
+            // Зберігаємо вибір теми
+            SaveTheme(Application.Current.UserAppTheme);
 
-//        // Збереження вибраної теми
-//        private static void SaveTheme()
-//        {
-//            var currentTheme = Application.Current?.RequestedTheme == AppTheme.Dark ? "dark" : "light";
-//            SettingsService.SaveSetting("theme", currentTheme);
-//        }
-//    }
-//}
+            // Сповіщаємо про зміну теми
+            OnThemeChanged();
+        }
+
+        // Збереження теми
+        private static void SaveTheme(AppTheme theme)
+        {
+            try
+            {
+                Debug.WriteLine($"Збереження теми: {theme}");
+                SettingsService.SaveSetting(ThemeKey, theme.ToString());
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Помилка збереження теми: {ex.Message}");
+            }
+        }
+
+        // Завантаження теми
+        public static AppTheme LoadTheme()
+        {
+            try
+            {
+                string? savedTheme = SettingsService.LoadSetting<string>(ThemeKey);
+
+                if (!string.IsNullOrEmpty(savedTheme) && Enum.TryParse(savedTheme, out AppTheme theme))
+                {
+                    Debug.WriteLine($"Завантажена тема: {theme}");
+                    return theme;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Помилка завантаження теми: {ex.Message}");
+            }
+
+            // Повертаємо тему за замовчуванням (світла)
+            Debug.WriteLine("Використовується тема за замовчуванням: Light");
+            return AppTheme.Light;
+        }
+
+        // Оновлення кнопки теми
+        public static string GetThemeIcon()
+        {
+            if (Application.Current is null) return "🌙";
+
+            return Application.Current.UserAppTheme == AppTheme.Dark ? "☀️" : "🌙";
+        }
+
+        // Сповіщення про зміну теми
+        private static void OnThemeChanged()
+        {
+            ThemeChanged?.Invoke();
+        }
+    }
+}

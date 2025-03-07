@@ -1,12 +1,15 @@
 ﻿using NotesApp.Resources.Localization;
 using NotesApp.Services;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Windows.Input;
 
 namespace NotesApp
 {
     public class NotesViewModel : ObservableObject
     {
+        private bool _isLoading;
+
         public ObservableCollection<Note> Notes { get; set; } = new();
 
         // Локалізовані тексти
@@ -81,15 +84,25 @@ namespace NotesApp
 
         private async Task LoadNotesAsync()
         {
-            var loadedNotes = await NoteService.LoadNotesAsync();
-            if (loadedNotes is not null)
+            IsLoading = true; // Показуємо індикатор завантаження
+
+            try
             {
-                Notes = new ObservableCollection<Note>(loadedNotes);
-
-                // Оновлюємо дні тижня після завантаження
-                UpdateDaysOfWeek();
-
-                OnPropertyChanged(nameof(Notes));
+                var loadedNotes = await NoteService.LoadNotesAsync();
+                if (loadedNotes is not null)
+                {
+                    Notes = new ObservableCollection<Note>(loadedNotes);
+                    UpdateDaysOfWeek();
+                    OnPropertyChanged(nameof(Notes));
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Помилка завантаження нотаток: {ex.Message}");
+            }
+            finally
+            {
+                IsLoading = false; // Ховаємо індикатор завантаження
             }
         }
 
@@ -113,5 +126,19 @@ namespace NotesApp
             // Оновлюємо дні тижня при зміні мови
             UpdateDaysOfWeek();
         }
+
+        public bool IsLoading
+        {
+            get => _isLoading;
+            set
+            {
+                _isLoading = value;
+                OnPropertyChanged(nameof(IsLoading));
+                OnPropertyChanged(nameof(IsNotLoading)); // Оновлюємо IsNotLoading при зміні IsLoading
+            }
+        }
+
+        public bool IsNotLoading => !IsLoading;
+
     }
 }
