@@ -1,4 +1,5 @@
 ﻿using NotesApp.Resources.Localization;
+using NotesApp.Services;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 
@@ -29,6 +30,12 @@ namespace NotesApp
 
             // Завантаження нотаток
             _ = LoadNotesAsync();
+
+            // Оновлення локалізованих текстів при запуску
+            UpdateLocalizedTexts();
+
+            // Підписуємось на зміну мови, щоб UI оновлювався
+            LocalizationService.LanguageChanged += UpdateLocalizedTexts;
         }
 
         private async Task OnAddDayButtonClicked()

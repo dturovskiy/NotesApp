@@ -1,5 +1,4 @@
-﻿using NotesApp.Resources.Localization;
-using NotesApp.Services;
+﻿using NotesApp.Services;
 
 namespace NotesApp
 {
@@ -70,7 +69,7 @@ namespace NotesApp
 
         private void UpdateTitle()
         {
-            Title = Localization.Title;
+            Title = ViewModel.Title;
         }
 
         protected override void OnDisappearing()
