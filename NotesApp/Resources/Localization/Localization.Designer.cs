@@ -70,6 +70,15 @@ namespace NotesApp.Resources.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Confirmation.
+        /// </summary>
+        internal static string Confirmation {
+            get {
+                return ResourceManager.GetString("Confirmation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delete.
         /// </summary>
         internal static string Delete {
@@ -97,11 +106,38 @@ namespace NotesApp.Resources.Localization {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Editing.
+        /// </summary>
+        internal static string Editing {
+            get {
+                return ResourceManager.GetString("Editing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter new topic:.
+        /// </summary>
+        internal static string Enter_new_topic_ {
+            get {
+                return ResourceManager.GetString("Enter new topic:", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enter a topic.
         /// </summary>
         internal static string EnterTopic {
             get {
                 return ResourceManager.GetString("EnterTopic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No.
+        /// </summary>
+        internal static string No {
+            get {
+                return ResourceManager.GetString("No", resourceCulture);
             }
         }
         
@@ -120,6 +156,15 @@ namespace NotesApp.Resources.Localization {
         internal static string Topic {
             get {
                 return ResourceManager.GetString("Topic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string Yes {
+            get {
+                return ResourceManager.GetString("Yes", resourceCulture);
             }
         }
     }

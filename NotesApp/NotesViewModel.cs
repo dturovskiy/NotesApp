@@ -47,7 +47,7 @@ namespace NotesApp
             var newNote = new Note
             {
                 Date = today, // Зберігаємо дату як DateTime
-                Topic = "Введіть тему"
+                Topic = Localization.EnterTopic
             };
 
             // Оновлюємо день тижня та форматовану дату після створення нотатки
@@ -61,7 +61,7 @@ namespace NotesApp
         {
             if (note is null) return;
 
-            string newTopic = await Shell.Current.DisplayPromptAsync("Редагування", "Введіть нову тему:", initialValue: note.Topic);
+            string newTopic = await Shell.Current.DisplayPromptAsync(Localization.Editing, Localization.Enter_new_topic_, initialValue: note.Topic);
             if (!string.IsNullOrWhiteSpace(newTopic))
             {
                 note.Topic = newTopic;
@@ -73,7 +73,14 @@ namespace NotesApp
         {
             if (note is null) return;
 
-            bool confirm = await Shell.Current.DisplayAlert("Підтвердження", "Ви точно хочете видалити цю нотатку?", "Так", "Ні");
+            // Використовуємо локалізований текст
+            bool confirm = await Shell.Current.DisplayAlert(
+                Localization.Confirmation, // Заголовок
+                Localization.DeleteConfirm, // Повідомлення
+                Localization.Yes, // Кнопка "Так"
+                Localization.No // Кнопка "Ні"
+            );
+
             if (!confirm) return;
 
             if (Notes.Remove(note))

@@ -138,4 +138,19 @@
   <data name="DeleteConfirm" xml:space="preserve">
     <value>Êtes-vous sûr de vouloir supprimer cette note ?</value>
   </data>
+  <data name="Confirmation" xml:space="preserve">
+    <value>Confirmation</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Oui</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>Non</value>
+  </data>
+  <data name="Editing" xml:space="preserve">
+    <value>Édition</value>
+  </data>
+  <data name="Enter new topic:" xml:space="preserve">
+    <value>Entrez un nouveau sujet :</value>
+  </data>
 </root>
