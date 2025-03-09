@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace NotesApp
+namespace NotesApp.Services
 {
     public static class NoteService
     {

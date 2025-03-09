@@ -138,4 +138,19 @@
   <data name="DeleteConfirm" xml:space="preserve">
     <value>Ви точно хочете видалити цю нотатку?</value>
   </data>
+  <data name="Confirmation" xml:space="preserve">
+    <value>Підтвердження</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Так</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>Ні</value>
+  </data>
+  <data name="Editing" xml:space="preserve">
+    <value>Редагування</value>
+  </data>
+  <data name="Enter new topic:" xml:space="preserve">
+    <value>Введіть нову тему:</value>
+  </data>
 </root>

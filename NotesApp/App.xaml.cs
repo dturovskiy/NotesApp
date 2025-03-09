@@ -11,20 +11,5 @@
         {
             return new Window(new AppShell());
         }
-
-        public static void SwitchTheme()
-        {
-            if (Application.Current == null)
-                return;
-
-            if (Application.Current.UserAppTheme == AppTheme.Dark)
-            {
-                Application.Current.UserAppTheme = AppTheme.Light;
-            }
-            else
-            {
-                Application.Current.UserAppTheme = AppTheme.Dark;
-            }
-        }
     }
 }

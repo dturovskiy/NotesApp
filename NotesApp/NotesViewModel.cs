@@ -1,11 +1,15 @@
 ﻿using NotesApp.Resources.Localization;
+using NotesApp.Services;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Windows.Input;
 
 namespace NotesApp
 {
     public class NotesViewModel : ObservableObject
     {
+        private bool _isLoading;
+
         public ObservableCollection<Note> Notes { get; set; } = new();
 
         // Локалізовані тексти
@@ -29,6 +33,12 @@ namespace NotesApp
 
             // Завантаження нотаток
             _ = LoadNotesAsync();
+
+            // Оновлення локалізованих текстів при запуску
+            UpdateLocalizedTexts();
+
+            // Підписуємось на зміну мови, щоб UI оновлювався
+            LocalizationService.LanguageChanged += UpdateLocalizedTexts;
         }
 
         private async Task OnAddDayButtonClicked()
@@ -37,7 +47,7 @@ namespace NotesApp
             var newNote = new Note
             {
                 Date = today, // Зберігаємо дату як DateTime
-                Topic = "Введіть тему"
+                Topic = Localization.EnterTopic
             };
 
             // Оновлюємо день тижня та форматовану дату після створення нотатки
@@ -51,7 +61,7 @@ namespace NotesApp
         {
             if (note is null) return;
 
-            string newTopic = await Shell.Current.DisplayPromptAsync("Редагування", "Введіть нову тему:", initialValue: note.Topic);
+            string newTopic = await Shell.Current.DisplayPromptAsync(Localization.Editing, Localization.Enter_new_topic_, initialValue: note.Topic);
             if (!string.IsNullOrWhiteSpace(newTopic))
             {
                 note.Topic = newTopic;
@@ -63,7 +73,14 @@ namespace NotesApp
         {
             if (note is null) return;
 
-            bool confirm = await Shell.Current.DisplayAlert("Підтвердження", "Ви точно хочете видалити цю нотатку?", "Так", "Ні");
+            // Використовуємо локалізований текст
+            bool confirm = await Shell.Current.DisplayAlert(
+                Localization.Confirmation, // Заголовок
+                Localization.DeleteConfirm, // Повідомлення
+                Localization.Yes, // Кнопка "Так"
+                Localization.No // Кнопка "Ні"
+            );
+
             if (!confirm) return;
 
             if (Notes.Remove(note))
@@ -74,15 +91,25 @@ namespace NotesApp
 
         private async Task LoadNotesAsync()
         {
-            var loadedNotes = await NoteService.LoadNotesAsync();
-            if (loadedNotes is not null)
+            IsLoading = true; // Показуємо індикатор завантаження
+
+            try
             {
-                Notes = new ObservableCollection<Note>(loadedNotes);
-
-                // Оновлюємо дні тижня після завантаження
-                UpdateDaysOfWeek();
-
-                OnPropertyChanged(nameof(Notes));
+                var loadedNotes = await NoteService.LoadNotesAsync();
+                if (loadedNotes is not null)
+                {
+                    Notes = new ObservableCollection<Note>(loadedNotes);
+                    UpdateDaysOfWeek();
+                    OnPropertyChanged(nameof(Notes));
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Помилка завантаження нотаток: {ex.Message}");
+            }
+            finally
+            {
+                IsLoading = false; // Ховаємо індикатор завантаження
             }
         }
 
@@ -106,5 +133,19 @@ namespace NotesApp
             // Оновлюємо дні тижня при зміні мови
             UpdateDaysOfWeek();
         }
+
+        public bool IsLoading
+        {
+            get => _isLoading;
+            set
+            {
+                _isLoading = value;
+                OnPropertyChanged(nameof(IsLoading));
+                OnPropertyChanged(nameof(IsNotLoading)); // Оновлюємо IsNotLoading при зміні IsLoading
+            }
+        }
+
+        public bool IsNotLoading => !IsLoading;
+
     }
 }

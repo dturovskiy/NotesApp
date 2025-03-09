@@ -1,5 +1,4 @@
-﻿using NotesApp.Resources.Localization;
-using NotesApp.Services;
+﻿using NotesApp.Services;
 
 namespace NotesApp
 {
@@ -18,8 +17,21 @@ namespace NotesApp
             BindingContext = ViewModel;
 
             LocalizationService.LanguageChanged += OnLanguageChanged;
+            ThemeService.ThemeChanged += OnThemeChanged;
 
             UpdateLanguageButton();
+            UpdateThemeButton();
+
+            if (Application.Current != null)
+            {
+                Application.Current.UserAppTheme = ThemeService.LoadTheme();
+            }
+        }
+
+        private void OnThemeChanged()
+        {
+            // Оновлення кнопки теми
+            UpdateThemeButton();
         }
 
         private void OnLanguageChanged()
@@ -42,24 +54,15 @@ namespace NotesApp
             LanguageSwitchButton.Text = LocalizationService.GetFlag();
         }
 
-        private void OnThemeSwitchClicked(object sender, EventArgs e)
-        {
-            if (Application.Current is null) return;
-
-            Application.Current.UserAppTheme = Application.Current.UserAppTheme == AppTheme.Light ? AppTheme.Dark : AppTheme.Light;
-            UpdateThemeButton();
-        }
-
         private void UpdateThemeButton()
         {
-            if (Application.Current?.RequestedTheme == AppTheme.Dark)
-            {
-                ThemeSwitchButton.Text = "☀️";
-            }
-            else
-            {
-                ThemeSwitchButton.Text = "🌙";
-            }
+            ThemeSwitchButton.Text = ThemeService.GetThemeIcon();
+        }
+
+        private void OnThemeSwitchClicked(object sender, EventArgs e)
+        {
+            // Зміна теми через ThemeService
+            ThemeService.ToggleTheme();
         }
 
         private void OnLanguageSwitchClicked(object sender, EventArgs e)
@@ -70,13 +73,14 @@ namespace NotesApp
 
         private void UpdateTitle()
         {
-            Title = Localization.Title;
+            Title = ViewModel.Title;
         }
 
         protected override void OnDisappearing()
         {
-            // Відписуємося від події при закритті сторінки
+            // Відписуємося від подій при закритті сторінки
             LocalizationService.LanguageChanged -= OnLanguageChanged;
+            ThemeService.ThemeChanged -= OnThemeChanged;
             base.OnDisappearing();
         }
     }
