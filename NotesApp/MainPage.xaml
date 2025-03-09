@@ -32,7 +32,7 @@
     </ContentPage.Resources>
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem x:Name="ThemeSwitchButton" Text="🌙" Clicked="OnThemeSwitchClicked" />
+        <ToolbarItem x:Name="ThemeSwitchButton" Text="" Clicked="OnThemeSwitchClicked" />
         <ToolbarItem x:Name="LanguageSwitchButton" Text="🌐" Clicked="OnLanguageSwitchClicked" />
     </ContentPage.ToolbarItems>
 

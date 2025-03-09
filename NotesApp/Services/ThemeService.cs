@@ -64,9 +64,9 @@ namespace NotesApp.Services
         // Оновлення кнопки теми
         public static string GetThemeIcon()
         {
-            if (Application.Current is null) return "🌙";
-
-            return Application.Current.UserAppTheme == AppTheme.Dark ? "☀️" : "🌙";
+            // Використовуємо збережену тему для визначення іконки
+            var currentTheme = LoadTheme();
+            return currentTheme == AppTheme.Dark ? "☀️" : "🌙";
         }
 
         // Сповіщення про зміну теми
