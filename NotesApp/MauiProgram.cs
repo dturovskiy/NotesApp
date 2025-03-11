@@ -28,6 +28,14 @@ namespace NotesApp
             // Реєстрація сторінок
             builder.Services.AddTransient<MainPage>();
 
+            // Налаштування Splash Screen для Android
+#if ANDROID
+            builder.ConfigureMauiHandlers(handlers =>
+            {
+                handlers.AddHandler<Shell, Microsoft.Maui.Controls.Handlers.Compatibility.ShellRenderer>();
+            });
+#endif
+
             return builder.Build();
         }
     }
