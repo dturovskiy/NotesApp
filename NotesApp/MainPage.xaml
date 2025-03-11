@@ -6,7 +6,8 @@
              xmlns:viewModels="clr-namespace:NotesApp.ViewModels"
              x:Class="NotesApp.MainPage"
              x:DataType="viewModels:NotesViewModel"
-             Title="{Binding Title}">
+             Title="{Binding Title}"
+             x:Name="Page">
 
     <ContentPage.Resources>
         <ResourceDictionary>
@@ -86,7 +87,7 @@
                                     <Border Stroke="Gray" StrokeThickness="2" StrokeShape="RoundRectangle 15" Padding="15" HorizontalOptions="Fill">
                                         <VerticalStackLayout Spacing="5">
                                             <!-- Слово "Тема" -->
-                                            <Label Text="{Binding Source={RelativeSource AncestorType={x:Type local:MainPage}}, Path=BindingContext.TopicLabel}" 
+                                                <Label Text="{Binding Source={x:Reference Page}, Path=BindingContext.TopicLabel}" 
                                                    Style="{StaticResource NormalLabelStyle}" />
 
                                             <!-- Текст теми -->
@@ -98,15 +99,15 @@
                                 <!-- Кнопки "Редагувати" та "Видалити" -->
                                 <VerticalStackLayout Grid.Column="1" Spacing="10">
                                     <Button x:Name="EditButton"
-                                            Text="{Binding Source={RelativeSource AncestorType={x:Type local:MainPage}}, Path=BindingContext.EditButtonText}"
+                                            Text="{Binding Source={x:Reference Page}, Path=BindingContext.EditButtonText}"
                                             Style="{StaticResource ButtonStyle}"
-                                            Command="{Binding Source={RelativeSource AncestorType={x:Type local:MainPage}}, Path=BindingContext.EditCommand}"
+                                            Command="{Binding Source={x:Reference Page}, Path=BindingContext.EditCommand}"
                                             CommandParameter="{Binding .}" />
 
                                     <Button x:Name="DeleteButton"
-                                            Text="{Binding Source={RelativeSource AncestorType={x:Type local:MainPage}}, Path=BindingContext.DeleteButtonText}"
+                                            Text="{Binding Source={x:Reference Page}, Path=BindingContext.DeleteButtonText}"
                                             Style="{StaticResource ButtonStyle}"
-                                            Command="{Binding Source={RelativeSource AncestorType={x:Type local:MainPage}}, Path=BindingContext.DeleteCommand}"
+                                            Command="{Binding Source={x:Reference Page}, Path=BindingContext.DeleteCommand}"
                                             CommandParameter="{Binding .}"
                                             BackgroundColor="Red"
                                             TextColor="White" />
