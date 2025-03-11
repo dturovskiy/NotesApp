@@ -24,7 +24,7 @@
 		<ApplicationTitle>Notes App</ApplicationTitle>
 
 		<!-- App Identifier -->
-		<ApplicationId>com.companyname.notesapp</ApplicationId>
+		<ApplicationId>com.dturovskiy.notesapp</ApplicationId>
 
 		<!-- Versions -->
 		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
