@@ -78,6 +78,9 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+
+		<MauiIcon Include="Resources\AppIcon\appicon.svg" />
+		
 		<!-- Splash Screen -->
 		<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#23272e" />
 
