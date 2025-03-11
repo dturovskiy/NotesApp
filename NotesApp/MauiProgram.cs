@@ -1,24 +1,34 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using NotesApp.Services;
+using NotesApp.ViewModels;
 
-namespace NotesApp;
-
-public static class MauiProgram
+namespace NotesApp
 {
-	public static MauiApp CreateMauiApp()
-	{
-		var builder = MauiApp.CreateBuilder();
-		builder
-			.UseMauiApp<App>()
-			.ConfigureFonts(fonts =>
-			{
-				fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
-				fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-			});
+    public static class MauiProgram
+    {
+        public static MauiApp CreateMauiApp()
+        {
+            var builder = MauiApp.CreateBuilder();
+            builder
+                .UseMauiApp<App>()
+                .ConfigureFonts(fonts =>
+                {
+                    fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
+                    fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
+                });
 
 #if DEBUG
-		builder.Logging.AddDebug();
+            builder.Logging.AddDebug();
 #endif
 
-		return builder.Build();
-	}
+            // Реєстрація сервісів
+            builder.Services.AddSingleton<ILocalizationService, LocalizationService>(); // Додаємо LocalizationService
+            builder.Services.AddSingleton<IThemeService, ThemeService>();
+            builder.Services.AddTransient<NotesViewModel>();
+
+            // Реєстрація сторінок
+            builder.Services.AddTransient<MainPage>();
+
+            return builder.Build();
+        }
+    }
 }

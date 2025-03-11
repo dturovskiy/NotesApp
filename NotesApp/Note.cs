@@ -2,7 +2,7 @@
 
 namespace NotesApp
 {
-    public class Note : ObservableObject
+    public partial class Note : ObservableObject
     {
         private DateTime _date;
         private string? _topic;

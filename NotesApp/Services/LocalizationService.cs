@@ -1,30 +1,34 @@
 ﻿using System.Diagnostics;
 using System.Globalization;
+using System.Reflection;
+using System.Resources;
 
 namespace NotesApp.Services
 {
-    public static class LocalizationService
+    public class LocalizationService : ILocalizationService
     {
-        private static readonly List<CultureInfo> AvailableCultures = new()
-        {
+        private static readonly List<CultureInfo> AvailableCultures =
+        [
             new CultureInfo("uk"),
             new CultureInfo("en"),
             new CultureInfo("fr")
-        };
+        ];
 
-        private static readonly object _lock = new();
-        private static CultureInfo _currentCulture;
+        private static readonly Lock _lock = new();
+        private static CultureInfo? _currentCulture;
+        private readonly ResourceManager _resourceManager;
 
-        static LocalizationService()
+        public LocalizationService()
         {
+            // Ініціалізація ResourceManager для роботи з .resx файлами
+            _resourceManager = new ResourceManager("NotesApp.Resources.Strings", Assembly.GetExecutingAssembly());
             _currentCulture = LoadSavedCulture();
-            Thread.CurrentThread.CurrentCulture = _currentCulture;
-            Thread.CurrentThread.CurrentUICulture = _currentCulture;
+            ApplyCulture(_currentCulture);
         }
 
-        public static CultureInfo CurrentCulture
+        public CultureInfo CurrentCulture
         {
-            get => _currentCulture;
+            get => _currentCulture ?? throw new InvalidOperationException("Current culture is not set.");
             set
             {
                 lock (_lock)
@@ -32,8 +36,7 @@ namespace NotesApp.Services
                     if (_currentCulture != value)
                     {
                         _currentCulture = value;
-                        Thread.CurrentThread.CurrentCulture = value;
-                        Thread.CurrentThread.CurrentUICulture = value;
+                        ApplyCulture(value);
                         SaveCulture(value);
                         OnLanguageChanged();
                     }
@@ -41,35 +44,34 @@ namespace NotesApp.Services
             }
         }
 
-        public static event Action? LanguageChanged;
+        public event Action? LanguageChanged;
 
-        private static void OnLanguageChanged()
+        private void OnLanguageChanged()
         {
             LanguageChanged?.Invoke();
         }
 
-        public static void SwitchLanguage()
+        public void SwitchLanguage()
         {
+            if (_currentCulture == null)
+            {
+                Debug.WriteLine("Поточна культура не встановлена.");
+                return;
+            }
+
             int currentIndex = AvailableCultures.IndexOf(_currentCulture);
             int nextIndex = (currentIndex + 1) % AvailableCultures.Count;
             CurrentCulture = AvailableCultures[nextIndex];
         }
 
-        public static void SetLanguage(string languageCode)
+        public string GetFlag()
         {
-            var culture = new CultureInfo(languageCode);
-            if (AvailableCultures.Contains(culture))
+            if (_currentCulture == null)
             {
-                CurrentCulture = culture;
+                Debug.WriteLine("Поточна культура не встановлена.");
+                return "🌐"; // Повертаємо прапор за замовчуванням
             }
-            else
-            {
-                Debug.WriteLine($"Мова '{languageCode}' не підтримується.");
-            }
-        }
 
-        public static string GetFlag()
-        {
             return _currentCulture.Name switch
             {
                 "uk" => "🇺🇦", // Прапор України
@@ -79,15 +81,32 @@ namespace NotesApp.Services
             };
         }
 
+        public string GetString(string key)
+        {
+            if (_currentCulture == null)
+            {
+                Debug.WriteLine("Поточна культура не встановлена.");
+                return key; // Повертаємо ключ, якщо культура не встановлена
+            }
+
+            // Отримуємо значення за ключем для поточної культури
+            return _resourceManager.GetString(key, _currentCulture) ?? key;
+        }
+
+        private static void ApplyCulture(CultureInfo culture)
+        {
+            Thread.CurrentThread.CurrentCulture = culture;
+            Thread.CurrentThread.CurrentUICulture = culture;
+        }
+
         private static void SaveCulture(CultureInfo culture)
         {
             Debug.WriteLine($"Збереження мови: {culture.Name}");
-            SettingsService.SaveSetting("Language", culture.Name);  // Використовуємо "Language" як ключ
+            SettingsService.SaveSetting("Language", culture.Name);
         }
 
         private static CultureInfo LoadSavedCulture()
         {
-            // Пробуємо завантажити збережену мову
             string? savedCulture = SettingsService.LoadSetting<string>("Language");
 
             if (!string.IsNullOrEmpty(savedCulture))
@@ -95,7 +114,7 @@ namespace NotesApp.Services
                 try
                 {
                     var culture = new CultureInfo(savedCulture);
-                    if (AvailableCultures.Contains(culture))
+                    if (GetAvailableCultures().Contains(culture))
                     {
                         Debug.WriteLine($"Завантажена мова: {culture.Name}");
                         return culture;
@@ -107,19 +126,31 @@ namespace NotesApp.Services
                 }
             }
 
-            // Якщо збереженої мови немає або вона не підтримується, використовуємо мову пристрою
             string systemCulture = CultureInfo.CurrentUICulture.Name;
             var systemCultureInfo = new CultureInfo(systemCulture);
 
-            if (AvailableCultures.Contains(systemCultureInfo))
+            if (GetAvailableCultures().Contains(systemCultureInfo))
             {
                 Debug.WriteLine($"Використовується мова пристрою: {systemCultureInfo.Name}");
                 return systemCultureInfo;
             }
 
-            // Якщо мова пристрою не підтримується, повертаємо англійську
             Debug.WriteLine("Мова пристрою не підтримується, використовується англійська (en)");
             return new CultureInfo("en");
+        }
+
+        private static List<CultureInfo> GetAvailableCultures()
+        {
+            // Отримуємо всі доступні культури з ресурсів
+            var availableCultures = new List<CultureInfo>
+            {
+                // Додаємо культури, які підтримуються
+                new("en"), // Англійська
+                new("uk"), // Українська
+                new("fr") // Французька
+            };
+
+            return availableCultures;
         }
     }
 }

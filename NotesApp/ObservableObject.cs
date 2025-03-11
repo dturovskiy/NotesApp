@@ -2,7 +2,7 @@
 
 namespace NotesApp
 {
-    public class ObservableObject : INotifyPropertyChanged
+    public partial class ObservableObject : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -12,5 +12,3 @@ namespace NotesApp
         }
     }
 }
-
-    

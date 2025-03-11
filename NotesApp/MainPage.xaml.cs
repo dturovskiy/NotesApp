@@ -1,30 +1,37 @@
 ﻿using NotesApp.Services;
+using NotesApp.ViewModels;
 
 namespace NotesApp
 {
     public partial class MainPage : ContentPage
     {
         public NotesViewModel ViewModel { get; set; }
+        private readonly IThemeService _themeService;
+        private readonly ILocalizationService _localizationService;
 
-        public MainPage()
+        public MainPage(NotesViewModel viewModel, IThemeService themeService, ILocalizationService localizationService)
         {
             InitializeComponent();
 
-            // Створюємо екземпляр ViewModel
-            ViewModel = new NotesViewModel();
+            // Інжектуємо ViewModel та сервіси через конструктор
+            ViewModel = viewModel;
+            _themeService = themeService;
+            _localizationService = localizationService;
 
-            // Встановлюємо BindingContext
             BindingContext = ViewModel;
 
-            LocalizationService.LanguageChanged += OnLanguageChanged;
-            ThemeService.ThemeChanged += OnThemeChanged;
+            // Підписуємось на події
+            _localizationService.LanguageChanged += OnLanguageChanged;
+            _themeService.ThemeChanged += OnThemeChanged;
 
+            // Оновлюємо UI
             UpdateLanguageButton();
             UpdateThemeButton();
 
+            // Встановлюємо тему за замовчуванням
             if (Application.Current != null)
             {
-                Application.Current.UserAppTheme = ThemeService.LoadTheme();
+                Application.Current.UserAppTheme = _themeService.LoadTheme();
             }
         }
 
@@ -51,24 +58,24 @@ namespace NotesApp
 
         private void UpdateLanguageButton()
         {
-            LanguageSwitchButton.Text = LocalizationService.GetFlag();
+            LanguageSwitchButton.Text = _localizationService.GetFlag();
         }
 
         private void UpdateThemeButton()
         {
-            ThemeSwitchButton.Text = ThemeService.GetThemeIcon();
+            ThemeSwitchButton.Text = _themeService.GetThemeIcon();
         }
 
         private void OnThemeSwitchClicked(object sender, EventArgs e)
         {
             // Зміна теми через ThemeService
-            ThemeService.ToggleTheme();
+            _themeService.ToggleTheme();
         }
 
         private void OnLanguageSwitchClicked(object sender, EventArgs e)
         {
-            // Зміна мови
-            LocalizationService.SwitchLanguage();
+            // Зміна мови через LocalizationService
+            _localizationService.SwitchLanguage();
         }
 
         private void UpdateTitle()
@@ -79,8 +86,8 @@ namespace NotesApp
         protected override void OnDisappearing()
         {
             // Відписуємося від подій при закритті сторінки
-            LocalizationService.LanguageChanged -= OnLanguageChanged;
-            ThemeService.ThemeChanged -= OnThemeChanged;
+            _localizationService.LanguageChanged -= OnLanguageChanged;
+            _themeService.ThemeChanged -= OnThemeChanged;
             base.OnDisappearing();
         }
     }

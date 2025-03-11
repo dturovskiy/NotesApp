@@ -2,15 +2,15 @@
 
 namespace NotesApp.Services
 {
-    public static class ThemeService
+    public class ThemeService : IThemeService
     {
         private const string ThemeKey = "AppTheme";
 
         // Подія для сповіщення про зміну теми
-        public static event Action? ThemeChanged;
+        public event Action? ThemeChanged;
 
         // Зміна теми
-        public static void ToggleTheme()
+        public void ToggleTheme()
         {
             if (Application.Current is null) return;
 
@@ -39,7 +39,7 @@ namespace NotesApp.Services
         }
 
         // Завантаження теми
-        public static AppTheme LoadTheme()
+        public AppTheme LoadTheme()
         {
             try
             {
@@ -61,16 +61,15 @@ namespace NotesApp.Services
             return AppTheme.Light;
         }
 
-        // Оновлення кнопки теми
-        public static string GetThemeIcon()
+        // Оновлення іконки теми
+        public string GetThemeIcon()
         {
-            // Використовуємо збережену тему для визначення іконки
             var currentTheme = LoadTheme();
             return currentTheme == AppTheme.Dark ? "☀️" : "🌙";
         }
 
         // Сповіщення про зміну теми
-        private static void OnThemeChanged()
+        private void OnThemeChanged()
         {
             ThemeChanged?.Invoke();
         }
